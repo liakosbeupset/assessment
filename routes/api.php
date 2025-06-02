@@ -8,3 +8,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/import-posts', [\App\Http\Controllers\ImportPostsController::class, 'import'])->name('api.posts.import');
+Route::get('/fetch-posts', [\App\Http\Controllers\FetchPostsController::class, 'fetch'])->name('api.posts.fetch');

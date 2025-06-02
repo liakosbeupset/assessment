@@ -6,8 +6,10 @@
         <title>Assessment</title>
         @vite(['resources/css/app.css'])
     </head>
-    <body>
-        @yield('content')
+    <body class="min-h-screen bg-gray-100">
+        <main class="flex flex-col">
+            @yield('content')
+        </main>
         @vite(['resources/js/app.js'])
     </body>
 </html>
