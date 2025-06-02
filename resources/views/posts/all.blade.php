@@ -2,6 +2,6 @@
 
 @section('content')
     <div id="app">
-        <posts></posts>
+        <posts :items='@json($items)'></posts>
     </div>
 @endsection

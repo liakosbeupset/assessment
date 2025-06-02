@@ -6,6 +6,4 @@ Route::get('/', function () {
     return view('index');
 })->name('index');
 
-Route::get('/posts', function () {
-    return view('posts.all');
-})->name('posts.all');
+Route::get('/posts', [\App\Http\Controllers\PostsController::class, 'all'])->name('posts.all');
