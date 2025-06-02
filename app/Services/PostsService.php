@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Post;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class PostsService {
 
@@ -17,7 +19,14 @@ class PostsService {
 
     //Function to store posts to our database with the correct structure
     public function store(array $posts): void {
-        //todo: check response in tinkerwell and write the function
+        foreach ($posts as $post) {
+            Post::updateOrCreate([
+                'api_id' => $post['id'],
+                'title' => $post['title'],
+                'slug' => Str::slug($post['title']),
+                'body' => $post['body']
+            ]);
+        }
     }
 
 }
