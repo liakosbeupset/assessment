@@ -48,6 +48,8 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const items = ref([])
+//defined loading state here so we can hide the button initially and check for posts from database.
+//if this is not done then it shows the button initially until the axios call is completed
 const loading = ref(true)
 
 const fetchPosts = async () => {
@@ -57,6 +59,7 @@ const fetchPosts = async () => {
     } catch (e) {
         alert('Failed to fetch posts.')
     } finally {
+        //after the axios call is completed - set loading to false to show the button if needed
         loading.value = false
     }
 }
@@ -68,11 +71,13 @@ const importAndFetch = async () => {
         await fetchPosts()
     } catch (e) {
         alert('Failed to import posts.')
+        //if anything goes wrong - show the button again to try and import the posts again
         loading.value = false
     }
 }
 
 onMounted(() => {
+    //get posts on mount
     fetchPosts()
 })
 </script>
