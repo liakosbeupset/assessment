@@ -69,3 +69,11 @@ php artisan migrate
 ```bash
 php artisan serve
 ```
+
+### 8. Fetch Data
+
+Initially there is no data in the databse, we just click the Fetch Data button in the index page to fetch data from the public API:
+
+```bash
+https://jsonplaceholder.typicode.com/posts
+```
