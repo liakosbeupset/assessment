@@ -2,7 +2,7 @@
     <div class="p-6 max-w-6xl mx-auto font-sans antialiased">
         <!-- Search Input -->
         <div v-if="!loading" class="mb-4">
-            <input v-model="sq" @input="searchAndFetch" type="text" placeholder="Search (title,slug,body)..." class="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring focus:ring-blue-300"/>
+            <input v-model="sq" @input="searchAndFetch" type="text" placeholder="Search (title & slug)..." class="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring focus:ring-blue-300"/>
         </div>
 
         <!-- Table -->
@@ -37,13 +37,18 @@
         </div>
 
         <!-- Fetch Button -->
-        <div v-if="!loading && items.length === 0">
+        <div v-if="!loading && !dbHasPosts">
             <button
                 @click="importAndFetch"
                 class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white shadow hover:bg-blue-700"
             >
                 Fetch Data
             </button>
+        </div>
+
+        <!-- No results -->
+        <div v-if="!loading && dbHasPosts && items.length === 0">
+            <p>Nothing found. Please try something else.</p>
         </div>
     </div>
 </template>
@@ -58,6 +63,8 @@ const items = ref([])
 //if this is not done then it shows the button initially until the axios call is completed
 const loading = ref(true)
 const sq = ref('')
+//we need to set a variable to check if db has any post because after search if we have 0 items it shows the btn to fetch data
+const dbHasPosts = ref(false)
 
 const fetchPosts = async () => {
     try {
@@ -66,6 +73,11 @@ const fetchPosts = async () => {
             params: { search: sq.value }
         })
         items.value = response.data.data
+
+        //this will run only when we dont have any search query
+        if (!sq.value) {
+            dbHasPosts.value = items.value.length > 0
+        }
     } catch (e) {
         alert('Failed to fetch posts.')
     } finally {

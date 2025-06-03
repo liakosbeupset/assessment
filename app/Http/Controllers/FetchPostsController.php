@@ -14,10 +14,11 @@ class FetchPostsController extends Controller
             $query = Post::query();
 
             //add chained where statements for search if it exists in parameters for each of the fields we need
+            //removed body from search because we can not easily check if the search filtering is working (api has many matches between titles and body).
             if ($request->has('search')) {
                 $sq = $request->query('search');
                 $query->where(function ($q) use ($sq) {
-                    $q->where('title', 'like', '%'.$sq.'%')->orWhere('body', 'like', '%'.$sq.'%');
+                    $q->where('title', 'like', '%'.$sq.'%');
                 });
             }
 
