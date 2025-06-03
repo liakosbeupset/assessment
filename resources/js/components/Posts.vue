@@ -25,7 +25,7 @@
                     </thead>
 
                     <tbody class="divide-y divide-gray-200">
-                    <tr v-for="post in items" :key="post.id" class="*:text-gray-900 *:first:font-medium">
+                    <tr v-for="post in items" :key="post.id" @click="openModal(post)" class="*:text-gray-900 *:first:font-medium cursor-pointer">
                         <td class="px-3 py-2 whitespace-nowrap">{{ post.id }}</td>
                         <td class="px-3 py-2 whitespace-nowrap max-w-[150px] truncate">{{ post.title }}</td>
                         <td class="px-3 py-2 whitespace-nowrap max-w-[120px] truncate">{{ post.slug }}</td>
@@ -50,6 +50,19 @@
         <div v-if="!loading && dbHasPosts && items.length === 0">
             <p>Nothing found. Please try something else.</p>
         </div>
+
+        <!-- Modal -->
+        <div v-if="showModal" @click.self="closeModal" class="fixed inset-0 z-50 flex items-center justify-center bg-transparent">
+            <div class="bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
+                <h2 class="text-xl font-bold mb-4">{{ activePost?.title }}</h2>
+                <p class="text-gray-700 whitespace-pre-line">{{ activePost?.body }}</p>
+                <div class="mt-6 text-right">
+                    <button @click="closeModal" class="inline-flex items-center justify-center rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -65,6 +78,9 @@ const loading = ref(true)
 const sq = ref('')
 //we need to set a variable to check if db has any post because after search if we have 0 items it shows the btn to fetch data
 const dbHasPosts = ref(false)
+//add modal so we can actually see the whole body of an active post
+const showModal = ref(false)
+const activePost = ref(null)
 
 const fetchPosts = async () => {
     try {
@@ -100,6 +116,18 @@ const importAndFetch = async () => {
 
 //debounce fetchPosts to give user the time to type whatever he wants
 const searchAndFetch = debounce(fetchPosts, 300)
+
+//activate post first and show model afterwards to avoid flashing with empty modal
+const openModal = (post) => {
+    activePost.value = post
+    showModal.value = true
+}
+
+//close modal first and deactivate post afterwards to avoid showing blank modal briefly before closing
+const closeModal = () => {
+    showModal.value = false
+    activePost.value = null
+}
 
 onMounted(() => {
     //get posts on mount
