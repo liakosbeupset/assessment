@@ -1,12 +1,17 @@
 <template>
     <div class="p-6 max-w-6xl mx-auto font-sans antialiased">
+        <!-- Search Input -->
+        <div v-if="!loading" class="mb-4">
+            <input v-model="sq" @input="searchAndFetch" type="text" placeholder="Search (title,slug,body)..." class="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring focus:ring-blue-300"/>
+        </div>
+
         <!-- Table -->
         <div v-if="!loading && items.length > 0">
-      <span class="flex items-center pb-4">
-        <span class="h-px flex-1 bg-gray-300"></span>
-        <span class="shrink-0 px-4 text-gray-900">All Posts</span>
-        <span class="h-px flex-1 bg-gray-300"></span>
-      </span>
+            <span class="flex items-center pb-4">
+                <span class="h-px flex-1 bg-gray-300"></span>
+                <span class="shrink-0 px-4 text-gray-900">All Posts</span>
+                <span class="h-px flex-1 bg-gray-300"></span>
+            </span>
 
             <div class="overflow-x-auto rounded border border-gray-300 shadow-sm">
                 <table class="min-w-full divide-y-2 divide-gray-200">
@@ -46,15 +51,20 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import debounce from 'lodash.debounce'
 
 const items = ref([])
 //defined loading state here so we can hide the button initially and check for posts from database.
 //if this is not done then it shows the button initially until the axios call is completed
 const loading = ref(true)
+const sq = ref('')
 
 const fetchPosts = async () => {
     try {
-        const response = await axios.get('/api/fetch-posts')
+        //add parameters for search
+        const response = await axios.get('/api/fetch-posts', {
+            params: { search: sq.value }
+        })
         items.value = response.data.data
     } catch (e) {
         alert('Failed to fetch posts.')
@@ -75,6 +85,9 @@ const importAndFetch = async () => {
         loading.value = false
     }
 }
+
+//debounce fetchPosts to give user the time to type whatever he wants
+const searchAndFetch = debounce(fetchPosts, 300)
 
 onMounted(() => {
     //get posts on mount
